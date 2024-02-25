@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             LittleLemonTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = Onboarding.route) {
+                NavHost(navController = navController, startDestination = Home.route) {
                     onboardingScreen(navController)
                     homeScreen(navController)
                     dishDetailScreen()
