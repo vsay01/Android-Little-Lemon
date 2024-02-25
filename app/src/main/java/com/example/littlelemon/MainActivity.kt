@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -14,7 +16,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.littlelemon.detail.DishDetails
-import com.example.littlelemon.home.HomeScreen
+import com.example.littlelemon.home.ui.HomeViewModel
+import com.example.littlelemon.home.ui.compose.HomeBodyScreenState
+import com.example.littlelemon.home.ui.compose.HomeScreen
 import com.example.littlelemon.nav.Home
 import com.example.littlelemon.nav.Onboarding
 import com.example.littlelemon.onboarding.ui.OnboardingViewModel
@@ -47,12 +51,6 @@ class MainActivity : ComponentActivity() {
             val id =
                 requireNotNull(it.arguments?.getInt(com.example.littlelemon.nav.DishDetails.argDishId)) { "Dish id is null" }
             DishDetails(id)
-        }
-    }
-
-    private fun NavGraphBuilder.homeScreen(navController: NavHostController) {
-        composable(Home.route) {
-            HomeScreen(navController = navController)
         }
     }
 
@@ -104,6 +102,28 @@ class MainActivity : ComponentActivity() {
                             OnboardingViewModel.RegistrationFormEvent.Submit
                         )
                     }
+                )
+            )
+        }
+    }
+
+    private fun NavGraphBuilder.homeScreen(navController: NavHostController) {
+        composable(Home.route) {
+            val viewModel = viewModel<HomeViewModel>()
+            val searchText by viewModel.searchText.collectAsState()
+            val categories by viewModel.categories.collectAsState()
+            val dishes by viewModel.dishes.collectAsState()
+            val isSearching by viewModel.isSearching.collectAsState()
+            HomeScreen(
+                navController = navController,
+                homeBodyScreenState = HomeBodyScreenState(
+                    searchText = searchText,
+                    onSearchTextChange = {
+                        viewModel.onSearchTextChange(it)
+                    },
+                    isSearching = isSearching,
+                    dishes = dishes,
+                    categories = categories
                 )
             )
         }

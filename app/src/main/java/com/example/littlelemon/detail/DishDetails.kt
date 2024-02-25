@@ -24,9 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.littlelemon.home.DishRepository
+import com.example.littlelemon.home.data.DishRepository
 import com.example.littlelemon.R
-import com.example.littlelemon.home.TopAppBar
+import com.example.littlelemon.home.ui.compose.TopAppBar
 import com.example.littlelemon.ui.theme.LittleLemonColor
 
 @Composable
