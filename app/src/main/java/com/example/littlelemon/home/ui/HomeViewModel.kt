@@ -27,13 +27,13 @@ class HomeViewModel : ViewModel() {
 
     private val _dishes = MutableStateFlow(DishRepository.dishes)
     val dishes = searchText
-        .debounce(500L)
+        .debounce(200L)
         .onEach { _isSearching.update { true } }
         .combine(_dishes) { text, dishes ->
             if (text.isBlank()) {
                 dishes
             } else {
-                delay(1000L)
+                delay(500L)
                 dishes.filter {
                     it.doesMatchSearchQuery(text)
                 }
@@ -42,11 +42,30 @@ class HomeViewModel : ViewModel() {
         .onEach { _isSearching.update { false } }
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
+            SharingStarted.WhileSubscribed(1000),
             _dishes.value
         )
 
     fun onSearchTextChange(text: String) {
         _searchText.value = text
+    }
+
+    fun onCategorySelected(category: String) {
+        // update isSelect state of each item in category
+        DishRepository.categories.forEach {
+            it.isSelected = it.name.contentEquals(category)
+        }
+        _categories.value = DishRepository.categories
+
+        // filter dishes result based on the selected category
+        _dishes.value = if (_searchText.value.isEmpty() || dishes.value.isEmpty()) {
+            DishRepository.dishes.filter {
+                it.category.contentEquals(category.lowercase())
+            }
+        } else {
+            dishes.value.filter {
+                it.category.contentEquals(category.lowercase())
+            }
+        }
     }
 }

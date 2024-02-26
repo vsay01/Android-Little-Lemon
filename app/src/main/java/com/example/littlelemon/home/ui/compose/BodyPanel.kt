@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
@@ -24,7 +23,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -40,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.littlelemon.R
 import com.example.littlelemon.home.data.Dish
+import com.example.littlelemon.home.data.DishCategory
 import com.example.littlelemon.nav.DishDetails
 import com.example.littlelemon.ui.theme.LittleLemonColor
 
@@ -48,7 +47,8 @@ data class HomeBodyScreenState(
     val onSearchTextChange: (String) -> Unit,
     val isSearching: Boolean,
     val dishes: List<Dish>,
-    val categories: List<String>
+    val categories: List<DishCategory>,
+    val onCategorySelected: (String) -> Unit
 )
 
 @Composable
@@ -56,22 +56,33 @@ fun BodyPanel(
     navController: NavHostController,
     homeBodyScreenState: HomeBodyScreenState
 ) {
-    Column {
-        UpperPanel(
-            homeBodyScreenState.searchText,
-            homeBodyScreenState.onSearchTextChange
-        )
-        CategorySection(categories = homeBodyScreenState.categories)
-        if (homeBodyScreenState.isSearching) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
+    with(homeBodyScreenState) {
+        LazyColumn {
+            item {
+                UpperPanel(
+                    searchText,
+                    onSearchTextChange
                 )
             }
-        } else {
-            LazyColumn {
-                itemsIndexed(homeBodyScreenState.dishes) { _, dish ->
-                    MenuDish(navController, dish)
+            item {
+                CategorySection(
+                    categories = categories,
+                    onCategorySelected = onCategorySelected
+                )
+            }
+            item {
+                if (isSearching) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                } else {
+                    Column {
+                        dishes.forEach { dish ->
+                            MenuDish(navController, dish)
+                        }
+                    }
                 }
             }
         }
@@ -116,7 +127,8 @@ fun UpperPanel(
                     modifier = Modifier
                         .padding(bottom = 28.dp, end = 20.dp)
                         .fillMaxWidth(0.6f),
-                    color = LittleLemonColor.cloud
+                    color = LittleLemonColor.cloud,
+                    fontWeight = FontWeight.Normal
                 )
                 Image(
                     painter = painterResource(id = R.drawable.upperpanelimage),
@@ -153,7 +165,10 @@ fun UpperPanel(
 }
 
 @Composable
-fun CategorySection(categories: List<String>) {
+fun CategorySection(
+    categories: List<DishCategory>,
+    onCategorySelected: (String) -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -171,13 +186,18 @@ fun CategorySection(categories: List<String>) {
             ) {
                 items(categories) {
                     OutlinedButton(
-                        onClick = { },
+                        onClick = {
+                            onCategorySelected.invoke(it.name)
+                        },
                         border = BorderStroke(1.dp, LittleLemonColor.cloud),
                         shape = RoundedCornerShape(50), // = 50% percent
                         // or shape = CircleShape
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = LittleLemonColor.cloud)
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            backgroundColor = if (it.isSelected) LittleLemonColor.yellow else LittleLemonColor.cloud,
+                            contentColor = LittleLemonColor.charcoal
+                        )
                     ) {
-                        Text(text = it)
+                        Text(text = it.name)
                     }
                 }
             }
@@ -192,40 +212,42 @@ fun MenuDish(navController: NavHostController? = null, dish: Dish) {
         Log.d("AAA", "Click ${dish.id}")
         navController?.navigate(DishDetails.route + "/${dish.id}")
     }) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ) {
-            Column {
-                Text(
-                    text = dish.name,
-                    style = MaterialTheme.typography.h2
-                )
-                Text(
-                    text = dish.description,
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier
-                        .fillMaxWidth(0.75f)
-                        .padding(top = 5.dp, bottom = 5.dp)
-                )
-                Text(
-                    text = "$${dish.price}",
-                    style = MaterialTheme.typography.body2,
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Column {
+                    Text(
+                        text = dish.name,
+                        style = MaterialTheme.typography.h2
+                    )
+                    Text(
+                        text = dish.description,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier
+                            .fillMaxWidth(0.75f)
+                            .padding(top = 5.dp, bottom = 5.dp)
+                    )
+                    Text(
+                        text = "$${dish.price}",
+                        style = MaterialTheme.typography.body2,
+                    )
+                }
+                Image(
+                    painter = painterResource(id = dish.imageResource),
+                    contentDescription = dish.name,
+                    modifier = Modifier.clip(
+                        RoundedCornerShape(1.dp)
+                    )
                 )
             }
-            Image(
-                painter = painterResource(id = dish.imageResource),
-                contentDescription = dish.name,
-                modifier = Modifier.clip(
-                    RoundedCornerShape(1.dp)
-                )
+            Divider(
+                modifier = Modifier.padding(start = 12.dp, end = 12.dp),
+                thickness = 1.dp,
+                color = LittleLemonColor.cloud
             )
         }
     }
-    Divider(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp),
-        thickness = 1.dp,
-        color = LittleLemonColor.yellow
-    )
 }

@@ -58,11 +58,11 @@ object DishRepository {
     fun getDish(id: Int) = dishes.firstOrNull { it.id == id }
 
     val categories = listOf(
-        "Starters",
-        "Mains",
-        "Desserts",
-        "Drinks",
-        "Side"
+        DishCategory("Starters"),
+        DishCategory("Mains"),
+        DishCategory("Desserts"),
+        DishCategory("Drinks"),
+        DishCategory("Side")
     )
 }
 
@@ -72,7 +72,7 @@ data class Dish(
     val description: String,
     val price: Double,
     @DrawableRes val imageResource: Int,
-    val category: String
+    val category: String,
 ) {
     fun doesMatchSearchQuery(query: String): Boolean {
         val matchingCombinations = listOf(
@@ -86,3 +86,8 @@ data class Dish(
         }
     }
 }
+
+data class DishCategory(
+    val name: String,
+    var isSelected: Boolean = false
+)

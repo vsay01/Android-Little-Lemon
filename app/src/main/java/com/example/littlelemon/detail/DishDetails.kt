@@ -24,46 +24,49 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.littlelemon.home.data.DishRepository
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.littlelemon.R
+import com.example.littlelemon.home.data.DishRepository
 import com.example.littlelemon.home.ui.compose.TopAppBar
 import com.example.littlelemon.ui.theme.LittleLemonColor
 
 @Composable
-fun DishDetails(id: Int) {
+fun DishDetails(id: Int, navController: NavController) {
     val dish = requireNotNull(DishRepository.getDish(id))
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.padding(start = 10.dp, end = 10.dp)
     ) {
-        TopAppBar(
-
-        )
-        Image(
-            painter = painterResource(id = dish.imageResource),
-            contentDescription = dish.name,
-            modifier = Modifier.fillMaxWidth(),
-            contentScale = ContentScale.FillWidth
-        )
-        Column {
-            Text(
-                text = dish.name,
-                style = MaterialTheme.typography.h1
-            )
-            Text(
-                text = dish.description,
-                style = MaterialTheme.typography.body1
-            )
-        }
-        Counter()
-        Button(
-            onClick = { /*TODO*/ },
-            colors = ButtonDefaults.buttonColors(backgroundColor = LittleLemonColor.yellow)
+        TopAppBar(navController = navController)
+        Column(
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         ) {
-            Text(
-                text = stringResource(id = R.string.add_for) + " $${dish.price}",
-                textAlign = TextAlign.Center
+            Image(
+                painter = painterResource(id = dish.imageResource),
+                contentDescription = dish.name,
+                modifier = Modifier.fillMaxWidth(),
+                contentScale = ContentScale.FillWidth
             )
+            Column {
+                Text(
+                    text = dish.name,
+                    style = MaterialTheme.typography.h1
+                )
+                Text(
+                    text = dish.description,
+                    style = MaterialTheme.typography.body1
+                )
+            }
+            Counter()
+            Button(
+                onClick = { /*TODO*/ },
+                colors = ButtonDefaults.buttonColors(backgroundColor = LittleLemonColor.yellow)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.add_for) + " $${dish.price}",
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
@@ -108,5 +111,5 @@ fun Counter() {
 @Preview
 @Composable
 fun DishDetailsPreview() {
-    DishDetails(id = 1)
+    DishDetails(id = 1, rememberNavController())
 }

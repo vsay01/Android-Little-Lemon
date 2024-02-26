@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -35,13 +36,13 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = Home.route) {
                     onboardingScreen(navController)
                     homeScreen(navController)
-                    dishDetailScreen()
+                    dishDetailScreen(navController)
                 }
             }
         }
     }
 
-    private fun NavGraphBuilder.dishDetailScreen() {
+    private fun NavGraphBuilder.dishDetailScreen(navController: NavController) {
         composable(
             com.example.littlelemon.nav.DishDetails.route + "/{${com.example.littlelemon.nav.DishDetails.argDishId}}",
             arguments = listOf(navArgument(com.example.littlelemon.nav.DishDetails.argDishId) {
@@ -50,7 +51,7 @@ class MainActivity : ComponentActivity() {
         ) {
             val id =
                 requireNotNull(it.arguments?.getInt(com.example.littlelemon.nav.DishDetails.argDishId)) { "Dish id is null" }
-            DishDetails(id)
+            DishDetails(id, navController)
         }
     }
 
@@ -123,7 +124,10 @@ class MainActivity : ComponentActivity() {
                     },
                     isSearching = isSearching,
                     dishes = dishes,
-                    categories = categories
+                    categories = categories,
+                    onCategorySelected = { selectedCategory ->
+                        viewModel.onCategorySelected(selectedCategory)
+                    }
                 )
             )
         }
