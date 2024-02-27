@@ -5,15 +5,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.littlelemon.datastore.ImplDataStore
 import com.example.littlelemon.extensions.validateEmail
 import com.example.littlelemon.extensions.validateFirstName
 import com.example.littlelemon.extensions.validateLastName
 import com.example.littlelemon.onboarding.ui.compose.RegistrationFormState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class OnboardingViewModel : ViewModel() {
+@HiltViewModel
+class OnboardingViewModel @Inject constructor(
+    private val implDataStore: ImplDataStore
+) : ViewModel() {
 
     var state by mutableStateOf(RegistrationFormState())
 
@@ -60,6 +66,11 @@ class OnboardingViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
+            implDataStore.saveProfileData(
+                state.firstName,
+                state.lastName,
+                state.email
+            )
             validationEventChannel.send(ValidationEvent.Success)
         }
     }
