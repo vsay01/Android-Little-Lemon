@@ -1,16 +1,19 @@
-package com.example.littlelemon.profile.ui.compose
+package com.example.littlelemon.screens.profile.ui.compose
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.littlelemon.onboarding.ui.compose.TopAppBar
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.littlelemon.screens.onboarding.ui.compose.TopAppBarNoProfile
 
 @Composable
 fun ProfileScreen(
+    navController: NavController,
     profileScreenState: ProfileScreenState
 ) {
     Column {
-        TopAppBar()
+        TopAppBarNoProfile(navController)
         BodyPanel(profileScreenState)
     }
 }
@@ -19,6 +22,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenPreview() {
     ProfileScreen(
+        navController = rememberNavController(),
         profileScreenState = ProfileScreenState(
             firstName = "titi",
             lastName = "tata",

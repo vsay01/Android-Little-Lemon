@@ -1,4 +1,4 @@
-package com.example.littlelemon.home.ui.compose
+package com.example.littlelemon.screens.home.ui.compose
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable

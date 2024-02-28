@@ -1,4 +1,4 @@
-package com.example.littlelemon.onboarding.ui.compose
+package com.example.littlelemon.screens.onboarding.ui.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

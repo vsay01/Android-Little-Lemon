@@ -8,7 +8,8 @@ import androidx.compose.runtime.Composable
 private val LightColorPalette = lightColors(
     primaryVariant = LittleLemonColor.yellow,
     secondary = LittleLemonColor.pink,
-    onSurface = LittleLemonColor.green
+    onSurface = LittleLemonColor.green,
+    primary = LittleLemonColor.green
 )
 
 @Composable

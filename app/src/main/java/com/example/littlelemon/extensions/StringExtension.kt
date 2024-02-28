@@ -1,7 +1,7 @@
 package com.example.littlelemon.extensions
 
 import android.util.Patterns
-import com.example.littlelemon.onboarding.data.ValidationResult
+import com.example.littlelemon.screens.onboarding.data.ValidationResult
 
 fun String.validateFirstName(): ValidationResult {
     if (isBlank()) {

@@ -1,8 +1,8 @@
-package com.example.littlelemon.home.ui
+package com.example.littlelemon.screens.home.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.littlelemon.home.data.DishRepository
+import com.example.littlelemon.screens.home.data.DishRepository
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

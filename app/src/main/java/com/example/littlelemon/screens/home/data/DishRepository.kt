@@ -1,4 +1,4 @@
-package com.example.littlelemon.home.data
+package com.example.littlelemon.screens.home.data
 
 import androidx.annotation.DrawableRes
 import com.example.littlelemon.R

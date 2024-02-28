@@ -1,4 +1,4 @@
-package com.example.littlelemon.onboarding.ui
+package com.example.littlelemon.screens.onboarding.ui
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,7 +9,7 @@ import com.example.littlelemon.datastore.ImplDataStore
 import com.example.littlelemon.extensions.validateEmail
 import com.example.littlelemon.extensions.validateFirstName
 import com.example.littlelemon.extensions.validateLastName
-import com.example.littlelemon.onboarding.ui.compose.RegistrationFormState
+import com.example.littlelemon.screens.onboarding.ui.compose.RegistrationFormState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -76,7 +76,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     sealed class ValidationEvent {
-        object Success : ValidationEvent()
+        data object Success : ValidationEvent()
     }
 
     sealed class RegistrationFormEvent {
@@ -85,6 +85,6 @@ class OnboardingViewModel @Inject constructor(
 
         data class EmailChanged(val email: String) : RegistrationFormEvent()
 
-        object Submit : RegistrationFormEvent()
+        data object Submit : RegistrationFormEvent()
     }
 }

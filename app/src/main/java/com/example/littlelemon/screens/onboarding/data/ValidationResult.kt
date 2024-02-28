@@ -1,4 +1,4 @@
-package com.example.littlelemon.onboarding.data
+package com.example.littlelemon.screens.onboarding.data
 
 data class ValidationResult(
     val successful: Boolean,

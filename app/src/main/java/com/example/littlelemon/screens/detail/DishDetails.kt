@@ -1,4 +1,4 @@
-package com.example.littlelemon.detail
+package com.example.littlelemon.screens.detail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.littlelemon.R
-import com.example.littlelemon.home.data.DishRepository
-import com.example.littlelemon.home.ui.compose.TopAppBar
+import com.example.littlelemon.screens.home.data.DishRepository
+import com.example.littlelemon.screens.onboarding.ui.compose.TopAppBarNoProfile
 import com.example.littlelemon.ui.theme.LittleLemonColor
 
 @Composable
@@ -37,7 +37,7 @@ fun DishDetails(id: Int, navController: NavController) {
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        TopAppBar(navController = navController)
+        TopAppBarNoProfile(navController = navController)
         Column(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         ) {

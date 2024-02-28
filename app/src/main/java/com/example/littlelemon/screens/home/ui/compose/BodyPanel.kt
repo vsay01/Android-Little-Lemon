@@ -1,4 +1,4 @@
-package com.example.littlelemon.home.ui.compose
+package com.example.littlelemon.screens.home.ui.compose
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.littlelemon.R
-import com.example.littlelemon.home.data.Dish
-import com.example.littlelemon.home.data.DishCategory
+import com.example.littlelemon.screens.home.data.Dish
+import com.example.littlelemon.screens.home.data.DishCategory
 import com.example.littlelemon.nav.DishDetails
 import com.example.littlelemon.ui.theme.LittleLemonColor
 

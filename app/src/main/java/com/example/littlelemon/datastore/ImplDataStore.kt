@@ -49,4 +49,10 @@ class ImplDataStore(private val context: Context) {
                 preferences[PreferencesKeys.EMAIL_KEY].orEmpty()
             )
         }
+
+    suspend fun clearDataStore() {
+        context.dataStore.edit {
+            it.clear()
+        }
+    }
 }

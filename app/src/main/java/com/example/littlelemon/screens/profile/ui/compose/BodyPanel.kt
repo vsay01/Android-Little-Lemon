@@ -1,4 +1,4 @@
-package com.example.littlelemon.profile.ui.compose
+package com.example.littlelemon.screens.profile.ui.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -30,6 +30,7 @@ fun BodyPanel(
     profileState: ProfileScreenState
 ) {
     Column {
+        Spacer(modifier = Modifier.padding(top = 16.dp))
         Text(
             text = stringResource(id = R.string.onboarding_personal_information),
             fontSize = 18.sp,
@@ -77,7 +78,7 @@ fun BodyPanel(
         Spacer(modifier = Modifier.weight(1f))
         Button(
             onClick = {
-
+                profileState.onLogoutClicked?.invoke()
             },
             modifier = Modifier
                 .fillMaxWidth()

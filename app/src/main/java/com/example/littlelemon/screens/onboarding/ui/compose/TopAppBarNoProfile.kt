@@ -1,11 +1,9 @@
-package com.example.littlelemon.home.ui.compose
+package com.example.littlelemon.screens.onboarding.ui.compose
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -21,9 +19,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.littlelemon.R
 
 @Composable
-fun TopAppBar(navController: NavController) {
+fun TopAppBarNoProfile(navController: NavController) {
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp, bottom = 16.dp),
@@ -40,23 +37,13 @@ fun TopAppBar(navController: NavController) {
         Image(
             painter = painterResource(id = R.drawable.littlelemonimgtxt_nobg),
             contentDescription = "Little Lemon Logo",
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
+            modifier = Modifier.padding(start = 8.dp)
         )
-        IconButton(onClick = { }) {
-            Image(
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = "Profile",
-                modifier = Modifier
-                    .size(70.dp)
-                    .padding(end = 16.dp)
-            )
-        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun TopAppBarPreview() {
-    TopAppBar(rememberNavController())
+fun TopAppBarNoProfilePreview() {
+    TopAppBarNoProfile(rememberNavController())
 }

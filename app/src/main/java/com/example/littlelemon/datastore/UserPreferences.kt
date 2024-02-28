@@ -5,3 +5,6 @@ data class UserPreferences(
     val lastName: String,
     val email: String
 )
+
+fun UserPreferences.isUserPreferencesEmpty() =
+    firstName.isEmpty() && lastName.isEmpty() && email.isEmpty()
