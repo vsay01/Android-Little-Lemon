@@ -1,6 +1,7 @@
 package com.example.littlelemon.screens.home.ui.compose
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -30,24 +32,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.littlelemon.R
-import com.example.littlelemon.screens.home.data.Dish
-import com.example.littlelemon.screens.home.data.DishCategory
 import com.example.littlelemon.nav.DishDetails
+import com.example.littlelemon.screens.home.data.model.MenuItem
+import com.example.littlelemon.screens.home.data.model.MenuItemCategory
+import com.example.littlelemon.screens.home.data.network.ApiResult
+import com.example.littlelemon.screens.home.data.network.models.NetworkMenuItemList
+import com.example.littlelemon.screens.home.data.network.models.asModel
 import com.example.littlelemon.ui.theme.LittleLemonColor
 
 data class HomeBodyScreenState(
     val searchText: String,
     val onSearchTextChange: (String) -> Unit,
     val isSearching: Boolean,
-    val dishes: List<Dish>,
-    val categories: List<DishCategory>,
+    val dishes: ApiResult<NetworkMenuItemList>,
+    val categories: List<MenuItemCategory>,
     val onCategorySelected: (String) -> Unit
 )
 
@@ -56,6 +63,8 @@ fun BodyPanel(
     navController: NavHostController,
     homeBodyScreenState: HomeBodyScreenState
 ) {
+    val context = LocalContext.current
+
     with(homeBodyScreenState) {
         LazyColumn {
             item {
@@ -74,13 +83,36 @@ fun BodyPanel(
                 if (isSearching) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center)
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(top = 16.dp, bottom = 16.dp)
                         )
                     }
                 } else {
-                    Column {
-                        dishes.forEach { dish ->
-                            MenuDish(navController, dish)
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        when (dishes) {
+                            is ApiResult.Loading -> {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .align(Alignment.Center)
+                                        .padding(top = 16.dp),
+                                    color = LittleLemonColor.green
+                                )
+                            }
+
+                            is ApiResult.Error -> {
+                                Toast.makeText(context, dishes.error, Toast.LENGTH_SHORT).show()
+                            }
+
+                            is ApiResult.Success -> {
+                                val list = dishes.data
+                                Column {
+                                    list?.menu?.forEach { dish ->
+                                        MenuDish(navController, dish.asModel())
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -166,7 +198,7 @@ fun UpperPanel(
 
 @Composable
 fun CategorySection(
-    categories: List<DishCategory>,
+    categories: List<MenuItemCategory>,
     onCategorySelected: (String) -> Unit
 ) {
     Card(
@@ -207,7 +239,7 @@ fun CategorySection(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MenuDish(navController: NavHostController? = null, dish: Dish) {
+fun MenuDish(navController: NavHostController? = null, dish: MenuItem) {
     Card(onClick = {
         Log.d("AAA", "Click ${dish.id}")
         navController?.navigate(DishDetails.route + "/${dish.id}")
@@ -220,7 +252,7 @@ fun MenuDish(navController: NavHostController? = null, dish: Dish) {
             ) {
                 Column {
                     Text(
-                        text = dish.name,
+                        text = dish.title,
                         style = MaterialTheme.typography.h2
                     )
                     Text(
@@ -235,9 +267,9 @@ fun MenuDish(navController: NavHostController? = null, dish: Dish) {
                         style = MaterialTheme.typography.body2,
                     )
                 }
-                Image(
-                    painter = painterResource(id = dish.imageResource),
-                    contentDescription = dish.name,
+                AsyncImage(
+                    model = dish.image,
+                    contentDescription = dish.title,
                     modifier = Modifier.clip(
                         RoundedCornerShape(1.dp)
                     )

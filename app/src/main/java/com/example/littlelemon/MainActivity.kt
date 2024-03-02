@@ -184,10 +184,10 @@ class MainActivity : ComponentActivity() {
 
     private fun NavGraphBuilder.homeScreen(navController: NavHostController) {
         composable(Home.route) {
-            val viewModel = viewModel<HomeViewModel>()
+            val viewModel = hiltViewModel<HomeViewModel>()
             val searchText by viewModel.searchText.collectAsState()
             val categories by viewModel.categories.collectAsState()
-            val dishes by viewModel.dishes.collectAsState()
+            val menuItems by viewModel.menuItems.collectAsState()
             val isSearching by viewModel.isSearching.collectAsState()
             HomeScreen(
                 navController = navController,
@@ -197,7 +197,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.onSearchTextChange(it)
                     },
                     isSearching = isSearching,
-                    dishes = dishes,
+                    dishes = menuItems,
                     categories = categories,
                     onCategorySelected = { selectedCategory ->
                         viewModel.onCategorySelected(selectedCategory)
