@@ -1,6 +1,13 @@
 package com.example.littlelemon.screens.home.data.model
 
 /**
+ * External data layer representation of menu item list
+ */
+class MenuItemList(
+    val menu: List<MenuItem>
+)
+
+/**
  * External data layer representation of a MenuItem
  */
 data class MenuItem(

@@ -12,4 +12,6 @@
     <string name="onboarding_last_name_label">Last name</string>
     <string name="onboarding_email_label">Email</string>
     <string name="onboarding_register">Register</string>
+    <string name="error_fetching_new_menu_item_list">Error fetching new menu item list</string>
+    <string name="error_fetching_empty">There is no menu item list</string>
 </resources>

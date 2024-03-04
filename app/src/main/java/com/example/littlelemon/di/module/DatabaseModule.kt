@@ -3,7 +3,7 @@ package com.example.littlelemon.di.module
 import android.content.Context
 import androidx.room.Room
 import com.example.littlelemon.screens.home.data.local.MenuItemDatabase
-import com.example.littlelemon.screens.home.data.local.dao.MenuItemDao
+import com.example.littlelemon.screens.home.data.local.dao.MenuItemListDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,8 +14,19 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 internal object DatabaseModule {
+
     @Provides
-    fun provideChannelDao(appDatabase: MenuItemDatabase): MenuItemDao {
-        return appDatabase.menuItemDao()
+    @Singleton
+    fun provideAppDatabase(
+        @ApplicationContext context: Context,
+    ): MenuItemDatabase = Room.databaseBuilder(
+        context,
+        MenuItemDatabase::class.java,
+        "menu-item-database",
+    ).build()
+
+    @Provides
+    fun provideChannelDao(appDatabase: MenuItemDatabase): MenuItemListDao {
+        return appDatabase.menuItemListDao()
     }
 }

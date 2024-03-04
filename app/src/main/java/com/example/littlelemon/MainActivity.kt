@@ -8,7 +8,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -187,7 +186,7 @@ class MainActivity : ComponentActivity() {
             val viewModel = hiltViewModel<HomeViewModel>()
             val searchText by viewModel.searchText.collectAsState()
             val categories by viewModel.categories.collectAsState()
-            val menuItems by viewModel.menuItems.collectAsState()
+            val menuItemsUiState by viewModel.menuItemsUiState.collectAsState()
             val isSearching by viewModel.isSearching.collectAsState()
             HomeScreen(
                 navController = navController,
@@ -197,7 +196,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.onSearchTextChange(it)
                     },
                     isSearching = isSearching,
-                    dishes = menuItems,
+                    menuItemsUiState = menuItemsUiState,
                     categories = categories,
                     onCategorySelected = { selectedCategory ->
                         viewModel.onCategorySelected(selectedCategory)

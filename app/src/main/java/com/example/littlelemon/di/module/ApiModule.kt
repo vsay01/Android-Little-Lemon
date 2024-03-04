@@ -1,12 +1,9 @@
 package com.example.littlelemon.di.module
 
-import android.content.Context
-import android.telecom.Call
 import com.example.littlelemon.screens.home.data.network.ApiService
-import com.example.littlelemon.screens.home.data.network.ApiServiceImpl
+import com.example.littlelemon.screens.home.data.network.MenuItemListRemoteDataSource
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
@@ -20,7 +17,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @dagger.Module
@@ -47,7 +43,7 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideApiService(httpClient: HttpClient): ApiService = ApiServiceImpl(httpClient)
+    fun provideApiService(httpClient: HttpClient): ApiService = MenuItemListRemoteDataSource(httpClient)
 
     @Provides
     fun provideDispatcher(): CoroutineDispatcher = Dispatchers.Default

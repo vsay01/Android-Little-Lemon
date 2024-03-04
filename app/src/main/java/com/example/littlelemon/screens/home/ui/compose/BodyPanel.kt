@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,16 +45,14 @@ import com.example.littlelemon.R
 import com.example.littlelemon.nav.DishDetails
 import com.example.littlelemon.screens.home.data.model.MenuItem
 import com.example.littlelemon.screens.home.data.model.MenuItemCategory
-import com.example.littlelemon.screens.home.data.network.ApiResult
-import com.example.littlelemon.screens.home.data.network.models.NetworkMenuItemList
-import com.example.littlelemon.screens.home.data.network.models.asModel
+import com.example.littlelemon.screens.home.ui.HomeViewModel
 import com.example.littlelemon.ui.theme.LittleLemonColor
 
 data class HomeBodyScreenState(
     val searchText: String,
     val onSearchTextChange: (String) -> Unit,
     val isSearching: Boolean,
-    val dishes: ApiResult<NetworkMenuItemList>,
+    val menuItemsUiState: HomeViewModel.MenuItemListUiState,
     val categories: List<MenuItemCategory>,
     val onCategorySelected: (String) -> Unit
 )
@@ -66,7 +65,9 @@ fun BodyPanel(
     val context = LocalContext.current
 
     with(homeBodyScreenState) {
-        LazyColumn {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             item {
                 UpperPanel(
                     searchText,
@@ -90,8 +91,8 @@ fun BodyPanel(
                     }
                 } else {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        when (dishes) {
-                            is ApiResult.Loading -> {
+                        when (menuItemsUiState) {
+                            is HomeViewModel.MenuItemListUiState.Loading -> {
                                 CircularProgressIndicator(
                                     modifier = Modifier
                                         .size(40.dp)
@@ -101,15 +102,27 @@ fun BodyPanel(
                                 )
                             }
 
-                            is ApiResult.Error -> {
-                                Toast.makeText(context, dishes.error, Toast.LENGTH_SHORT).show()
+                            is HomeViewModel.MenuItemListUiState.Error -> {
+                                Toast.makeText(
+                                    context,
+                                    menuItemsUiState.errorMessageId,
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
 
-                            is ApiResult.Success -> {
-                                val list = dishes.data
+                            is HomeViewModel.MenuItemListUiState.Empty -> {
+                                Toast.makeText(
+                                    context,
+                                    menuItemsUiState.errorMessageId,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            is HomeViewModel.MenuItemListUiState.Success -> {
+                                val list = menuItemsUiState.menuItemList
                                 Column {
-                                    list?.menu?.forEach { dish ->
-                                        MenuDish(navController, dish.asModel())
+                                    list.forEach { dish ->
+                                        MenuDish(navController, dish)
                                     }
                                 }
                             }
@@ -260,7 +273,7 @@ fun MenuDish(navController: NavHostController? = null, dish: MenuItem) {
                         style = MaterialTheme.typography.body1,
                         modifier = Modifier
                             .fillMaxWidth(0.75f)
-                            .padding(top = 5.dp, bottom = 5.dp)
+                            .padding(top = 5.dp, bottom = 5.dp, end = 5.dp)
                     )
                     Text(
                         text = "$${dish.price}",
