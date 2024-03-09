@@ -32,8 +32,8 @@ class MenuItemRepository @Inject constructor(
         MenuItemCategory("Side")
     )
 
-    override fun getMenuItemList(): Flow<List<MenuItem>> {
-        return menuItemListLocalDataSource.getMenuItemList()
+    override fun getMenuItemList(query: String?): Flow<List<MenuItem>> {
+        return menuItemListLocalDataSource.getMenuItemList(query)
             .map { localData -> localData.map { it.asExternalModel() } }
     }
 

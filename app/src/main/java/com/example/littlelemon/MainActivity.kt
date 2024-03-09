@@ -187,7 +187,6 @@ class MainActivity : ComponentActivity() {
             val searchText by viewModel.searchText.collectAsState()
             val categories by viewModel.categories.collectAsState()
             val menuItemsUiState by viewModel.menuItemsUiState.collectAsState()
-            val isSearching by viewModel.isSearching.collectAsState()
             HomeScreen(
                 navController = navController,
                 homeBodyScreenState = HomeBodyScreenState(
@@ -195,7 +194,6 @@ class MainActivity : ComponentActivity() {
                     onSearchTextChange = {
                         viewModel.onSearchTextChange(it)
                     },
-                    isSearching = isSearching,
                     menuItemsUiState = menuItemsUiState,
                     categories = categories,
                     onCategorySelected = { selectedCategory ->

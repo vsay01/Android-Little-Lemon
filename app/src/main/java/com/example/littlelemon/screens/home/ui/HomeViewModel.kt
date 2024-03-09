@@ -9,11 +9,13 @@ import com.example.littlelemon.screens.home.data.model.MenuItem
 import com.example.littlelemon.screens.home.data.network.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,9 +27,6 @@ class HomeViewModel @Inject constructor(
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
 
-    private val _isSearching = MutableStateFlow(false)
-    val isSearching = _isSearching.asStateFlow()
-
     private val _categories = MutableStateFlow(menuItemRepository.getMenuItemCategories())
     val categories = _categories.asStateFlow()
 
@@ -35,39 +34,21 @@ class HomeViewModel @Inject constructor(
         MutableStateFlow<MenuItemListUiState>(MenuItemListUiState.Loading)
     val menuItemsUiState: StateFlow<MenuItemListUiState> get() = _menuItemsUiState.asStateFlow()
 
-    /*    val dishes = searchText
-            .debounce(200L)
-            .onEach { _isSearching.update { true } }
-            .combine(_dishes) { text, dishes ->
-                if (text.isBlank()) {
-                    dishes
-                } else {
-                    delay(500L)
-                    dishes.filter {
-                        it.doesMatchSearchQuery(text)
-                    }
-                }
-            }
-            .onEach { _isSearching.update { false } }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(1000),
-                _dishes.value
-            )*/
-
     init {
         getMenuItems()
     }
 
-    private fun getMenuItems() {
-        menuItemRepository.getMenuItemList()
+    private fun getMenuItems(query: String? = null) {
+        menuItemRepository.getMenuItemList(query)
             .onEach { menuItemList: List<MenuItem> ->
                 if (menuItemList.isNotEmpty()) {
                     _menuItemsUiState.update {
                         MenuItemListUiState.Success(menuItemList = menuItemList)
                     }
                 } else {
-                    fetchMenuItems()
+                    if (query.isNullOrEmpty()) {
+                        fetchMenuItems()
+                    }
                 }
             }
             .launchIn(viewModelScope)
@@ -98,8 +79,17 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onSearchTextChange(text: String) {
-        _searchText.value = text
+    fun onSearchTextChange(query: String) {
+        _searchText.value = query
+        searchText
+            .onEach { text ->
+                getMenuItems(text)
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                MenuItemListUiState.Loading
+            )
     }
 
     fun onCategorySelected(category: String) {

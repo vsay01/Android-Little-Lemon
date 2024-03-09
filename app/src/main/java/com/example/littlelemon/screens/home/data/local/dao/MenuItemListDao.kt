@@ -14,4 +14,14 @@ interface MenuItemListDao {
 
     @Query("SELECT * from menu_table")
     fun getAllMenuItemList(): Flow<List<MenuItemEntity>>
+
+    @Query(
+        """
+          SELECT *
+          FROM menu_table
+          WHERE title LIKE '%' || :query || '%' OR
+                description LIKE '%' || :query || '%'
+        """
+    )
+    fun searchMenuItemByText(query: String): Flow<List<MenuItemEntity>>
 }

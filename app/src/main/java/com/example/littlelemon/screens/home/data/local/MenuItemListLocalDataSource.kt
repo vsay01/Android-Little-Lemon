@@ -3,6 +3,7 @@ package com.example.littlelemon.screens.home.data.local
 import com.example.littlelemon.screens.home.data.local.dao.MenuItemListDao
 import com.example.littlelemon.screens.home.data.local.entities.MenuItemEntity
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -16,5 +17,11 @@ class MenuItemListLocalDataSource @Inject constructor(
         }
     }
 
-    fun getMenuItemList() = menuItemDao.getAllMenuItemList()
+    fun getMenuItemList(query: String? = null): Flow<List<MenuItemEntity>> {
+        return if (query.isNullOrEmpty()) {
+            menuItemDao.getAllMenuItemList()
+        } else {
+            menuItemDao.searchMenuItemByText(query)
+        }
+    }
 }

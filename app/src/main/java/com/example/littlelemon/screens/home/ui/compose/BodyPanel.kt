@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +29,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -51,7 +53,6 @@ import com.example.littlelemon.ui.theme.LittleLemonColor
 data class HomeBodyScreenState(
     val searchText: String,
     val onSearchTextChange: (String) -> Unit,
-    val isSearching: Boolean,
     val menuItemsUiState: HomeViewModel.MenuItemListUiState,
     val categories: List<MenuItemCategory>,
     val onCategorySelected: (String) -> Unit
@@ -81,49 +82,39 @@ fun BodyPanel(
                 )
             }
             item {
-                if (isSearching) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(top = 16.dp, bottom = 16.dp)
-                        )
-                    }
-                } else {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        when (menuItemsUiState) {
-                            is HomeViewModel.MenuItemListUiState.Loading -> {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .align(Alignment.Center)
-                                        .padding(top = 16.dp),
-                                    color = LittleLemonColor.green
-                                )
-                            }
+                Box(modifier = Modifier.fillMaxSize()) {
+                    when (menuItemsUiState) {
+                        is HomeViewModel.MenuItemListUiState.Loading -> {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .align(Alignment.Center)
+                                    .padding(top = 16.dp),
+                                color = LittleLemonColor.green
+                            )
+                        }
 
-                            is HomeViewModel.MenuItemListUiState.Error -> {
-                                Toast.makeText(
-                                    context,
-                                    menuItemsUiState.errorMessageId,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                        is HomeViewModel.MenuItemListUiState.Error -> {
+                            Toast.makeText(
+                                context,
+                                menuItemsUiState.errorMessageId,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
-                            is HomeViewModel.MenuItemListUiState.Empty -> {
-                                Toast.makeText(
-                                    context,
-                                    menuItemsUiState.errorMessageId,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                        is HomeViewModel.MenuItemListUiState.Empty -> {
+                            Toast.makeText(
+                                context,
+                                menuItemsUiState.errorMessageId,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
-                            is HomeViewModel.MenuItemListUiState.Success -> {
-                                val list = menuItemsUiState.menuItemList
-                                Column {
-                                    list.forEach { dish ->
-                                        MenuDish(navController, dish)
-                                    }
+                        is HomeViewModel.MenuItemListUiState.Success -> {
+                            val list = menuItemsUiState.menuItemList
+                            Column {
+                                list.forEach { dish ->
+                                    MenuDish(navController, dish)
                                 }
                             }
                         }
