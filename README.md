@@ -16,6 +16,8 @@ Creating a food-ordering app for the Little Lemon restaurant with following feat
 - Dependency Injection Hilt
 - Data store
 - Navigation compose
+- Room
+- Ktor
 
 ## Figma wireframe
 
@@ -27,6 +29,7 @@ https://github.com/vsay01/Android-Little-Lemon/assets/6526127/dd44afee-3212-487a
 
 ## Technical notes
 [coming soon]
+- Offline first approach
 - Route user to either Onboarding screen or Home screen depends if user registered previously when the app launch
 - Validate field in compose UI
 - Save data using data store jetpack compose
