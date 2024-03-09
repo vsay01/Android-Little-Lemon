@@ -24,4 +24,13 @@ interface MenuItemListDao {
         """
     )
     fun searchMenuItemByText(query: String): Flow<List<MenuItemEntity>>
+
+    @Query(
+        """
+          SELECT *
+          FROM menu_table
+          WHERE category LIKE :category
+        """
+    )
+    fun getMenuItemByCategory(category: String): Flow<List<MenuItemEntity>>
 }

@@ -14,4 +14,6 @@
     <string name="onboarding_register">Register</string>
     <string name="error_fetching_new_menu_item_list">Error fetching new menu item list</string>
     <string name="error_fetching_empty">There is no menu item list</string>
+    <string name="error_fetching_empty_by_category">There is no menu item list for this category</string>
+    <string name="error_fetching_empty_by_query">There is no menu item list for this query</string>
 </resources>

@@ -38,16 +38,32 @@ class HomeViewModel @Inject constructor(
         getMenuItems()
     }
 
-    private fun getMenuItems(query: String? = null) {
-        menuItemRepository.getMenuItemList(query)
+    private fun getMenuItems(query: String? = null, category: String? = null) {
+        menuItemRepository.getMenuItemList(query = query, category = category)
             .onEach { menuItemList: List<MenuItem> ->
                 if (menuItemList.isNotEmpty()) {
                     _menuItemsUiState.update {
                         MenuItemListUiState.Success(menuItemList = menuItemList)
                     }
                 } else {
-                    if (query.isNullOrEmpty()) {
+                    // only fetch query from remote if query and category null or empty
+                    if (query.isNullOrEmpty() && category.isNullOrEmpty()) {
                         fetchMenuItems()
+                    } else {
+                    // query and search scenario with category or query null/empty
+                        category?.let {
+                            _menuItemsUiState.update {
+                                MenuItemListUiState.Empty(R.string.error_fetching_empty_by_category)
+                            }
+                        }
+                        query?.let {
+                            // if query is empty then show all list instead of error message
+                            if (it.isNotEmpty()) {
+                                _menuItemsUiState.update {
+                                    MenuItemListUiState.Empty(R.string.error_fetching_empty_by_query)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -83,7 +99,7 @@ class HomeViewModel @Inject constructor(
         _searchText.value = query
         searchText
             .onEach { text ->
-                getMenuItems(text)
+                getMenuItems(query = text)
             }
             .stateIn(
                 viewModelScope,
@@ -92,23 +108,32 @@ class HomeViewModel @Inject constructor(
             )
     }
 
-    fun onCategorySelected(category: String) {
-        // update isSelect state of each item in category
-        /*DishRepository.categories.forEach {
-            it.isSelected = it.name.contentEquals(category)
+    fun onCategorySelected(selectedCategory: String) {
+        var isCategorySelected = false
+        _categories.update {
+            _categories.value.map { menuItemCategory ->
+                // check if category is not yet selected and select again then it is select
+                // otherwise it is deselect
+                var selectedStatus = false
+                if (!menuItemCategory.isSelected
+                    && menuItemCategory.name.contentEquals(
+                        selectedCategory
+                    )
+                ) {
+                    selectedStatus = true
+                    isCategorySelected = true
+                }
+                menuItemCategory.copy(
+                    isSelected = selectedStatus
+                )
+            }
         }
-        _categories.value = DishRepository.categories
-
-        // filter dishes result based on the selected category
-        _dishes.value = if (_searchText.value.isEmpty() || dishes.value.isEmpty()) {
-            DishRepository.dishes.filter {
-                it.category.contentEquals(category.lowercase())
-            }
+        // if it is a select case and not deselect then get menu item with category text
+        if (isCategorySelected) {
+            getMenuItems(category = selectedCategory)
         } else {
-            dishes.value.filter {
-                it.category.contentEquals(category.lowercase())
-            }
-        }*/
+            getMenuItems(category = null)
+        }
     }
 
     sealed class MenuItemListUiState {

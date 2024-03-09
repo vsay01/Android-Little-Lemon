@@ -17,11 +17,16 @@ class MenuItemListLocalDataSource @Inject constructor(
         }
     }
 
-    fun getMenuItemList(query: String? = null): Flow<List<MenuItemEntity>> {
-        return if (query.isNullOrEmpty()) {
-            menuItemDao.getAllMenuItemList()
-        } else {
+    fun getMenuItemList(
+        query: String? = null,
+        category: String? = null
+    ): Flow<List<MenuItemEntity>> {
+        return if (!category.isNullOrEmpty()) {
+            menuItemDao.getMenuItemByCategory(category)
+        } else if (!query.isNullOrEmpty()) {
             menuItemDao.searchMenuItemByText(query)
+        } else {
+            menuItemDao.getAllMenuItemList()
         }
     }
 }
